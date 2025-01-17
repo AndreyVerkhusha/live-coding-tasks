@@ -52,7 +52,16 @@ const range = (arr) => {
 // console.log(range([1,4,3,2])) // '1-4'
 
   
-/* Написать функцию asyncLimit, которая принимает две аргумента: асинхронную функцию func и число delay, представляющее максимальное время выполнения функции в миллисекундах. */
+/*
+Написать функцию asyncLimit, которая принимает два аргумента: асинхронную функцию func и число delay, представляющее максимальное время выполнения функции в миллисекундах.
+В delay указывается за сколько должен выполниться промис.
+Если выполняется дольше чем delay - выдать ошибку "Превышен лимит времени исполнения". Если нет - вернуть вычисляемое значение
+Пример:
+// asyncLimit(fn, 50)(5) // rejected: Превышен лимит времени исполнения
+// asyncLimit(fn, 150)(5) // resolved: 25
+// asyncLimit(fn2, 100)(1, 2) // rejected: Превышен лимит времени исполнения
+// asyncLimit(fn2, 150)(1, 2) // resolved: 3
+*/
 const fn = async (n) => {
   await new Promise(res => setTimeout(res, 100))
   
@@ -67,9 +76,34 @@ const fn2 = async (a, b) => {
 
 const asyncLimit = (func, delay) => {
   
+  return async (...args) => {
+    const funcPromise = func(...args);
+    
+    const timeoutPromise = new Promise((_, reject)=>  {
+      setTimeout(() => reject("Превышен лимит"), delay)
+    })
+    
+    try {
+      const result =  await Promise.race([funcPromise, timeoutPromise]);
+      return `resolved: ${result}`
+    } catch (e) {
+      return `rejected: ${e}`
+    }
+
+  }
+  
 }
 
-asyncLimit(fn, 50)(5) // rejected: Превышен лимит времени исполнения
-asyncLimit(fn, 150)(5) // resolved: 25
-asyncLimit(fn2, 100)(1, 2) // rejected: Превышен лимит времени исполнения
-asyncLimit(fn2, 150)(1, 2) // resolved: 3
+(async () => {
+  const result1 = await asyncLimit(fn, 50)(5);
+  //console.log(result1);  // rejected: Превышен лимит времени исполнения
+
+  const result2 = await asyncLimit(fn, 150)(5);
+  //console.log(result2); // resolved: 25
+
+  const result3 = await asyncLimit(fn2, 100)(1, 2);
+  //console.log(result3); // rejected: Превышен лимит времени исполнения
+
+  const result4 = await asyncLimit(fn2, 150)(1, 2);
+  //console.log( result4); // resolved: 3
+})();
