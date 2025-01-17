@@ -109,6 +109,8 @@ const asyncLimit = (func, delay) => {
   //console.log( result4); // resolved: 3
 })();
 
+
+
 /* Реализовать стэк с условием реализации сложности за константное время O(1) */
 class MinStack {
     constructor() {
