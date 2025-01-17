@@ -108,3 +108,37 @@ const asyncLimit = (func, delay) => {
   const result4 = await asyncLimit(fn2, 150)(1, 2);
   //console.log( result4); // resolved: 3
 })();
+
+/* Реализовать стэк с условием реализации сложности за константное время O(1) */
+class MinStack {
+    constructor() {
+        this.stack = [];
+        this.minStack = [];
+    }
+  
+    pop() {
+        const pop = this.stack.pop();
+      
+        if(pop === this.minStack[this.minStack.length - 1]) {
+            this.minStack.pop()
+        }
+    }
+    
+    push(value) {
+        this.stack.push(value)
+        
+        if(this.minStack.length === 0 || value <= this.minStack[this.minStack.length - 1]) {
+            this.minStack.push(value)
+        }
+    }
+    
+    getMin() {
+        return this.minStack[this.minStack.length - 1]
+    }
+}
+
+const stack = new MinStack();
+stack.push(1)
+stack.push(2)
+stack.push(0)
+//console.log(stack.getMin())
