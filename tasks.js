@@ -52,3 +52,24 @@ const range = (arr) => {
 // console.log(range([1,4,3,2])) // '1-4'
 
   
+/* Написать функцию asyncLimit, которая принимает две аргумента: асинхронную функцию func и число delay, представляющее максимальное время выполнения функции в миллисекундах. */
+const fn = async (n) => {
+  await new Promise(res => setTimeout(res, 100))
+  
+  return n * n
+}
+
+const fn2 = async (a, b) => {
+  await new Promise(res => setTimeout(res, 120))
+  
+  return a + b;
+}
+
+const asyncLimit = (func, delay) => {
+  
+}
+
+asyncLimit(fn, 50)(5) // rejected: Превышен лимит времени исполнения
+asyncLimit(fn, 150)(5) // resolved: 25
+asyncLimit(fn2, 100)(1, 2) // rejected: Превышен лимит времени исполнения
+asyncLimit(fn2, 150)(1, 2) // resolved: 3
